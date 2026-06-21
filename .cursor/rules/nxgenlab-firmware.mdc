@@ -1,0 +1,38 @@
+---
+description: NxGenLab ESP32 / PlatformIO firmware conventions
+globs: "**/*.{cpp,h,ino,ini}"
+alwaysApply: false
+---
+
+# NxGenLab firmware
+
+## Stack
+
+- **PlatformIO** + Arduino framework on ESP32 / ESP32-C6 / ESP32-S3.
+- Displays: ST7789 320×172 (`drybox_clima`, `filament_clima`), round AMOLED 466×466 + LVGL (`OLED`/FlowZero).
+
+## Config
+
+- Defaults in `include/config.h`; secrets/per-unit in **`config.local.h`** (gitignored).
+- Identity: `DEVICE_ID`, `BOX_NAME`, `NXGEN_DEVICE_*` for WiFi setup library.
+
+## HAL pattern
+
+Separate modules: `*_hal.cpp` (wifi, ble, mqtt, display, sensor). Main loop calls `*_tick()`.
+
+## Climate / RH
+
+Use `climate_logic` rules: material-specific RH limits; zones Ok / Warn / Alert. Port logic to display-sim when changing thresholds.
+
+## WiFi provisioning
+
+Prefer **NVS + nxgenlab-wifi-setup** over hardcoded `WIFI_SSID` in production builds. BOOT 5 s → setup mode; 800 ms long press → product-specific action (e.g. lock metrics on drybox).
+
+## Integration snippet (PlatformIO)
+
+```ini
+lib_extra_dirs = ../nxgenlab-wifi-setup
+build_flags =
+    -D NXGEN_DEVICE_ID=\"db-001\"
+    -D NXGEN_DEVICE_LABEL=\"Drybox A\"
+```

@@ -1,0 +1,55 @@
+---
+description: NxGenLab ecosystem standards — repos, docs, UI, workflow (all projects)
+alwaysApply: true
+---
+
+# NxGenLab project standards
+
+You are working in the **NxGenLab** maker ecosystem: embedded (ESP32/PlatformIO), Python LAN tools, Klipper/Moonraker, and user-facing docs.
+
+## Workspace layout
+
+Shared libs and tools live under `~/Projects/` (not `cloud/`):
+
+| Path | Role |
+|------|------|
+| `nxgenlab-wifi-setup` | Captive-portal WiFi provisioning library |
+| `nxgenlab-display-sim` | Browser preview before firmware flash |
+| `nxgenlab-wiki` | Wiki source (deployed via `perbengtsson/wiki`) |
+| `drybox_clima`, `OLED` (FlowZero), `filament-stock`, `Dual-Filament-System-P1S`, `feeder_status_ledstatus_bar` | Product repos |
+
+Cross-repo lib path example: `lib_extra_dirs = ../nxgenlab-wifi-setup`
+
+## Code principles
+
+- **Minimal diff** — only change what the task requires; no drive-by refactors.
+- **Match existing style** — naming, HAL layers, `Serial.printf("[tag] …")` logging, `config.h` / `config.local.h`.
+- **Reuse** — extend existing functions; don't duplicate climate/UI logic already in another repo.
+
+## UI / design
+
+- Tokens from `ui_theme.h`: dark bg `#0A1628`, accent `#00D4FF`, material accents (PETG orange, PLA green, …).
+- Preview UI changes in **nxgenlab-display-sim** before editing `ui_*.cpp`.
+- Layperson-first for WiFi: captive portal + QR guide (`nxgenlab-wifi-setup`), not compile-time SSID.
+
+## Documentation
+
+- New repos: `README.md`, **`delivery_summary.md`** (status, files, TODO, GitHub URL), `LICENSE` (MIT).
+- User-facing wiki/docs: **English**. Optional Danish for stickers/quick-start only.
+- End-user guides belong in wiki or `docs/USER_GUIDE.md`, not only in firmware README.
+
+## Git & GitHub
+
+- Org/user: **ShadowMasterJedi** on GitHub.
+- **Do not commit or push** unless the user explicitly asks.
+- Tag releases (`v0.1.0`) for reusable libraries.
+
+## Typical workflows
+
+1. **Firmware UI** — sim → implement → flash once.
+2. **Shared library** — change in `nxgenlab-*` repo → bump tag → update consumer `lib_deps` or `lib_extra_dirs`.
+3. **Integration** — narrow Agent scope (e.g. "wire wifi_store into drybox only").
+
+## Ecosystem context
+
+Filament lifecycle: storage (DryBox) → inventory (Filament Stock) → print bench (dual feeder, FlowZero, feedled). Central hub/MQTT dashboard is planned — components should stay standalone until integrated.

@@ -10,7 +10,7 @@ Matches `drybox_clima` layout and `climate_logic` / `ui_theme` tokens.
 ## Quick start
 
 ```bash
-cd ~/Projects/cloud/nxgenlab-display-sim
+cd ~/Projects/nxgenlab-display-sim
 chmod +x start.sh
 ./start.sh
 ```
